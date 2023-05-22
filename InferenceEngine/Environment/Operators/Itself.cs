@@ -36,10 +36,11 @@ namespace InferenceEngine
                 //aTarget.Value = 1;
                 aTarget.Value = aSearchFor.Value; // might want to change value to 0.
             }
-            if (aTarget.Value == 1)
+            if(aTarget.Value == 1)
             {
-                return (aTarget);
+                return aTarget;
             }
+
             else return null;
         }
     }
