@@ -41,9 +41,14 @@ namespace InferenceEngine
             }
             return null;
         }
+
+
         public override SentenceElement Apply(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         {
-            if ((aSentenceThis.LeftElement.Apply(aSentenceAgenda) != null))
+            bool lLeftChanged = aSentenceThis.LeftElement.Apply(aSentenceAgenda) != null;
+            bool lRightChanged = aSentenceThis.RightElement.Apply(aSentenceAgenda) != null;
+
+            if (lLeftChanged)
             {
                 return aSentenceThis.RightElement;
             }

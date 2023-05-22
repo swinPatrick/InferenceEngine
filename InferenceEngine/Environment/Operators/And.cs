@@ -34,11 +34,20 @@ namespace InferenceEngine
             return aSentenceRequirements;
         }
 
+        /// <summary>
+        /// Passes Apply along to children. updates itself.
+        /// </summary>
+        /// <param name="aSentenceAgenda">The node being searched for</param>
+        /// <param name="aSentenceThis">the respective node</param>
+        /// <returns></returns>
         public override SentenceElement Apply(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         {
-            if ((aSentenceThis.LeftElement.Apply(aSentenceAgenda) != null) && (aSentenceThis.RightElement.Apply(aSentenceAgenda) != null))
+            bool lLeftChanged = aSentenceThis.LeftElement.Apply(aSentenceAgenda) != null;
+            bool lRightChanged = aSentenceThis.RightElement.Apply(aSentenceAgenda) != null;
+
+            if (lLeftChanged && lRightChanged)
             {
-                return aSentenceThis;
+                    return aSentenceThis;
             }
             else return null;
         }

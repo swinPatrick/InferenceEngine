@@ -34,7 +34,10 @@ namespace InferenceEngine
 
         public override SentenceElement Apply(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         {
-            if ((aSentenceThis.LeftElement.Apply(aSentenceAgenda) != null) || (aSentenceThis.RightElement.Apply(aSentenceAgenda) != null))
+            bool lLeftChanged = aSentenceThis.LeftElement.Apply(aSentenceAgenda) != null;
+            bool lRightChanged = aSentenceThis.RightElement.Apply(aSentenceAgenda) != null;
+
+            if ((lLeftChanged || lRightChanged))
             {
                 return aSentenceThis;
             }
