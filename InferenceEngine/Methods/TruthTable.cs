@@ -48,7 +48,7 @@ namespace InferenceEngine
             List<SentenceElement> newRow = new List<SentenceElement>(baseRow);
 
             double rowSum = Math.Pow(2, symbols.Count);
-            for (int i = 0; i <= rowSum; i++)
+            for (int i = 0; i < rowSum; i++)
             {
                 if (CheckRow(newRow, aKB))
                 {
@@ -149,8 +149,11 @@ namespace InferenceEngine
 
         private bool CheckRow(List<SentenceElement> aRow, List<SentenceElement> aKB)
         {
+            // dont touch original.
+            List<SentenceElement> KB_copy = new List<SentenceElement>(aKB);
+
             // check each rule in KB, if any are false, return false
-            foreach (SentenceElement rule in aKB)
+            foreach (SentenceElement rule in KB_copy)
             {
                 // Apply values in row to KB
                 foreach(SentenceElement symbol in aRow)

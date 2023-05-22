@@ -11,7 +11,7 @@ namespace InferenceEngine
         public override bool Check(SentenceElement aSentence)
         {
             // returns the value of the sentence/node
-            return aSentence.Value > 0;
+            return aSentence.Value == 1;
         }
 
         public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis, List<SentenceElement> aSentenceRequires)
