@@ -56,7 +56,7 @@ namespace InferenceEngine
                 }
                 TruthRow = NextRow(TruthRow).ToList();
             }
-
+            // TODO: TruthRows are identical.
             // KnowledgeBase is now a list of all rows that satisfy KB
         }
 
