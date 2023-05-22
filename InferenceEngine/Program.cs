@@ -62,7 +62,7 @@ namespace InferenceEngine
             Console.WriteLine(m.Ask(Query).ToString());
             */
             Console.WriteLine("Press any key to continue...");
-            Console.Read();
+            Console.ReadKey();
             
         }
 
