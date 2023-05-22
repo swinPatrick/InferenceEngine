@@ -11,7 +11,7 @@ namespace InferenceEngine
     {
         // Symbols is a list of SentenceElements (leaf values).
         // no two elements have the same name.
-        private List<SentenceElement> Symbols;
+        private List<SentenceElement> symbols;
 
         // Model is a row of the truthTable.
         private List<SentenceElement> TruthRow;
@@ -27,11 +27,12 @@ namespace InferenceEngine
 
         public override void Tell(List<SentenceElement> aKB)
         {
-            Symbols = GetSymbols(aKB);
+            KB = aKB;
+            symbols = GetSymbols(aKB);
 
             // first row of truth table is all false
             TruthRow = new List<SentenceElement>();
-            foreach (SentenceElement symbol in Symbols)
+            foreach (SentenceElement symbol in symbols)
             {
                 TruthRow.Add(new SentenceElement(symbol.Name, aValue: 0));
             }
@@ -46,13 +47,14 @@ namespace InferenceEngine
 
             TruthRows = new List<List<SentenceElement>>();
 
-            for (int i = 0; i < Math.Pow(2, Symbols.Count); i++)
+            double rowSum = Math.Pow(2, symbols.Count);
+            for (int i = 0; i < rowSum; i++)
             {
                 if (CheckRow(TruthRow, aKB))
                 {
                     TruthRows.Add(TruthRow);
                 }
-                TruthRow = NextRow(TruthRow);
+                TruthRow = NextRow(TruthRow).ToList();
             }
 
             // KnowledgeBase is now a list of all rows that satisfy KB
@@ -89,9 +91,14 @@ namespace InferenceEngine
             foreach (SentenceElement aSingleSentence in aGivenListOfSentences)
             {
                 List<SentenceElement> newSymbols = GetSymbols(aSingleSentence);
-                symbols.AddRange(newSymbols.Distinct());
+                //symbols.AddRange(newSymbols);
+                foreach (SentenceElement newSymbol in newSymbols)
+                {
+                    if (symbols.Any(x => x.Name == newSymbol.Name))
+                        continue;
+                    symbols.Add(newSymbol);
+                }
             }
-
             return symbols;
         }
 
@@ -108,8 +115,8 @@ namespace InferenceEngine
             else
             {
                 // if the operator of sentence isn't a lead type, it will have left and right children. 
-                Symbols.AddRange(GetSymbols(aSentence.LeftElement));
-                Symbols.AddRange(GetSymbols(aSentence.RightElement));
+                symbols.AddRange(GetSymbols(aSentence.LeftElement));
+                symbols.AddRange(GetSymbols(aSentence.RightElement));
             }
             return symbols;
 
@@ -118,8 +125,8 @@ namespace InferenceEngine
         // given a row, return the next row with updated element values (representing binary counting)
         private List<SentenceElement> NextRow(List<SentenceElement> aRow)
         {
-            List<SentenceElement> nextRow = new List<SentenceElement>(aRow);
-            foreach (SentenceElement symbol in Symbols)
+            List<SentenceElement> nextRow = aRow.ToList();
+            foreach (SentenceElement symbol in symbols)
             {
                 // check the symbol that exists in row
                 SentenceElement respectiveSymbolInRow = nextRow.Find(s=> s.Name == symbol.Name);
