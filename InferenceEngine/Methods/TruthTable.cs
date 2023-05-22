@@ -13,8 +13,6 @@ namespace InferenceEngine
         // no two elements have the same name.
         private List<SentenceElement> symbols;
 
-        // Model is a row of the truthTable.
-        private List<SentenceElement> TruthRow;
         private List<List<SentenceElement>> TruthRows;
 
         // Constructor
@@ -31,10 +29,10 @@ namespace InferenceEngine
             symbols = GetSymbols(aKB);
 
             // first row of truth table is all false
-            TruthRow = new List<SentenceElement>();
+            List<SentenceElement> baseRow = new List<SentenceElement>();
             foreach (SentenceElement symbol in symbols)
             {
-                TruthRow.Add(new SentenceElement(symbol.Name, aValue: 0));
+                baseRow.Add(new SentenceElement(symbol.Name, aValue: 0));
             }
 
             // create a row for each possible combination of true/false
@@ -47,14 +45,16 @@ namespace InferenceEngine
 
             TruthRows = new List<List<SentenceElement>>();
 
+            List<SentenceElement> newRow = new List<SentenceElement>(baseRow);
+
             double rowSum = Math.Pow(2, symbols.Count);
-            for (int i = 0; i < rowSum; i++)
+            for (int i = 0; i <= rowSum; i++)
             {
-                if (CheckRow(TruthRow, aKB))
+                if (CheckRow(newRow, aKB))
                 {
-                    TruthRows.Add(TruthRow);
+                    TruthRows.Add(newRow.Select(s=> new SentenceElement(s.Name, aValue: s.Value)).ToList());
                 }
-                TruthRow = NextRow(TruthRow).ToList();
+                newRow = NextRow(newRow);
             }
             // TODO: TruthRows are identical.
             // KnowledgeBase is now a list of all rows that satisfy KB
@@ -78,7 +78,10 @@ namespace InferenceEngine
             // return number of rows that satisfy Query (as sentence element with name as count)
             if (count > 0)
                 return string.Format("YES: {0}", count);
-            else 
+            // else, if query symbol is not on sybol list, return yes
+            if (symbols.Intersect(aQuery).Count() < aQuery.Count)
+                return "YES";
+            else
                 return "NO";
         }
 
