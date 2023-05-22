@@ -27,6 +27,8 @@ namespace InferenceEngine
             LeftElement = this;
             RightElement = this;
             ParentElement = this;
+            if (aOperator == null)
+                Operator = new Itself();
         }
 
 
