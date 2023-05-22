@@ -1,10 +1,17 @@
-﻿namespace InferenceEngine
+﻿using System.Collections.Generic;
+
+namespace InferenceEngine
 {
     abstract class Method
     {
+        // Name defines how different are referred.
+        public string Name { get; internal set; }
 
-        public abstract void Tell();
-        public abstract string Ask();
+        internal List<SentenceElement> KB;
+        internal List<SentenceElement> Query;
+
+        public abstract void Tell(List<SentenceElement> aKB);
+        public abstract string Ask(List<SentenceElement> aQuery);
 
     }
 }

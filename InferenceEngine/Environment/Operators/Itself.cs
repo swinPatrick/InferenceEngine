@@ -29,15 +29,16 @@ namespace InferenceEngine
             
         }
 
-        public override SentenceElement Apply(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
+        public override SentenceElement Apply(SentenceElement aSearchFor, SentenceElement aTarget)
         {
-            if (aSentenceThis.Name == aSentenceAgenda.Name)
+            if (aTarget.Name == aSearchFor.Name)
             {
-                aSentenceThis.Value = 1;
+                //aTarget.Value = 1;
+                aTarget.Value = aSearchFor.Value; // might want to change value to 0.
             }
-            if (aSentenceThis.Value == 1)
+            if (aTarget.Value == 1)
             {
-                return (aSentenceThis);
+                return (aTarget);
             }
             else return null;
         }

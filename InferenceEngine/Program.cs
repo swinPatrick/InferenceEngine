@@ -15,28 +15,43 @@ namespace InferenceEngine
 {
     internal class Program
     {
+        private static List<Method> methods;
         static void Main(string[] args)
         {
-            //InitMethods();
+            InitMethods();
             // iengine <method> <filename>
 
-            /*if(args.Length < 2)
+            if(args.Length < 2)
             {
                 Console.WriteLine("Usage: iengine <method> <filename>");
+                Console.WriteLine("Methods:");
+                foreach (Method m in methods)
+                {
+                    Console.WriteLine("\t" + m.Name);
+                }
                 return;
-            }*/
-            /*
-             */
+            }
+            string method = args[0];
+            string filename = args[1];
+            // filename = "testHornKB.txt";
 
+            // Initialise KnowledgeBase and Query variables.
             List<SentenceElement> KnowledgeBase = new List<SentenceElement>();
             List<SentenceElement> Query = new List<SentenceElement>();
-            ReadFile("test_HornKB.txt", KnowledgeBase, Query);
 
+            // Set variable that were read by document.
+            ReadFile(filename, KnowledgeBase, Query);
+
+            Method engineMethod = GetMethod(method);
+            
+            /* // FC Test
             SentenceElement QueryTest = new SentenceElement("d", new Itself());
             FC Forward_Chain = new FC();
+            */
 
-            Forward_Chain.Tell(KnowledgeBase, Query[0]);
-            Console.WriteLine(Forward_Chain.Ask());
+            engineMethod.Tell(KnowledgeBase);
+
+            Console.WriteLine(engineMethod.Ask(Query));
 
             /*
             Method m = GetMethod(args[0]);
@@ -45,10 +60,10 @@ namespace InferenceEngine
             m.Ask(Query);
 
             Console.WriteLine(m.Ask(Query).ToString());
-
+            */
             Console.WriteLine("Press any key to continue...");
             Console.Read();
-            */
+            
         }
 
         private static void ReadFile(string filename, List<SentenceElement> aKB, List<SentenceElement> aQ)
@@ -150,22 +165,19 @@ namespace InferenceEngine
 
             }
         }
-    }
-}
-/*
-private static List<Method> lMethods;
+    
 
         private static void InitMethods()
-        {
-            lMethods = new List<Method>();
-            lMethods.Add(new TruthTable());
-            lMethods.Add(new FC());
+        { 
+            methods = new List<Method>();
+            methods.Add(new TruthTable());
+            methods.Add(new FC());
             //lMethods.Add(new BackwardChaining());
         }
 
         private static Method GetMethod(string aName)
         {
-            foreach (Method m in lMethods)
+            foreach (Method m in methods)
             {
                 if (m.Name == aName)
                     return m;
@@ -173,5 +185,5 @@ private static List<Method> lMethods;
             return null;
         }
     }
-*/
 
+}

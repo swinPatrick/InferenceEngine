@@ -6,21 +6,20 @@ using System.Threading.Tasks;
 
 namespace InferenceEngine.Algorithms
 {
-    internal class FC
+    internal class FC : Method
     {
-        private List<SentenceElement> KB;
         private Queue<SentenceElement> Agenda;
-        private List<SentenceElement> Query;
         private List<SentenceElement> Inferred = new List<SentenceElement>();
-
+        
         public FC()
         {
+            Name = "FC";
             KB = new List<SentenceElement>();
             Agenda = new Queue<SentenceElement>();
             Query = new List<SentenceElement>();
         }
 
-        public void Tell(List<SentenceElement> aKB, SentenceElement aQuery)
+        public override void Tell(List<SentenceElement> aKB)
         {
             Agenda.Clear();
             KB = aKB;
@@ -32,12 +31,12 @@ namespace InferenceEngine.Algorithms
                     Agenda.Enqueue(knowledge);
                 }
             }
-            Query.Add(aQuery);
 
         }
 
-        public string Ask()
+        public override string Ask(List<SentenceElement> aQuery)
         {
+            Query.AddRange(aQuery);
 
             Inferred.Clear();
             /*
@@ -58,6 +57,7 @@ namespace InferenceEngine.Algorithms
             while (Agenda.Count() != 0)
             {
                 SentenceElement a_item = Agenda.Dequeue();
+                a_item.Value = 1;
                 foreach (SentenceElement knowledge in KB)
                 {
                     result = knowledge.Apply(a_item);

@@ -39,12 +39,12 @@ namespace InferenceEngine
         public List<SentenceElement> Requires(SentenceElement aSentence, List<SentenceElement> aSentenceRequirements)
         {
 
-            return this.Operator.Requires(aSentence, this, aSentenceRequirements);
+            return Operator.Requires(aSentence, this, aSentenceRequirements);
         }
 
         public SentenceElement Apply(SentenceElement aSentenceAgenda)
         {
-            return this.Operator.Apply(aSentenceAgenda, this);
+            return Operator.Apply(aSentenceAgenda, this);
         }
 
     }
