@@ -28,6 +28,13 @@ namespace InferenceEngine
             KB = aKB;
             symbols = GetSymbols(aKB);
 
+            //update KB to be false
+            foreach(SentenceElement rule in KB)
+            {
+                if(rule.Operator.GetType() != typeof(Itself) && rule.Operator.GetType() != typeof(Not))
+                    rule.GetSymbols().ForEach(x => x.Value = 0);
+            }
+
             // first row of truth table is all false
             List<SentenceElement> baseRow = new List<SentenceElement>();
             foreach (SentenceElement symbol in symbols)
@@ -50,7 +57,7 @@ namespace InferenceEngine
             double rowSum = Math.Pow(2, symbols.Count);
             for (int i = 0; i < rowSum; i++)
             {
-                if (CheckRow(newRow, aKB))
+                if (CheckRow(newRow, KB))
                 {
                     TruthRows.Add(newRow.Select(s=> new SentenceElement(s.Name, aValue: s.Value)).ToList());
                 }
@@ -58,6 +65,7 @@ namespace InferenceEngine
             }
         }
 
+        
         public override string Ask(List<SentenceElement> aQuery)
         {
             Query.AddRange(aQuery);
@@ -83,15 +91,16 @@ namespace InferenceEngine
                 return "NO";
         }
 
+
         // given a list of SentenceElements, return a list of SentenceElements that are symbols
-        private List<SentenceElement> GetSymbols(List<SentenceElement> aGivenListOfSentences)
+        public List<SentenceElement> GetSymbols(List<SentenceElement> aGivenListOfSentences)
         {
             // create a new empty list to hold found symbols
             List<SentenceElement> symbols = new List<SentenceElement>();
 
             foreach (SentenceElement aSingleSentence in aGivenListOfSentences)
             {
-                List<SentenceElement> newSymbols = GetSymbols(aSingleSentence);
+                List<SentenceElement> newSymbols = aSingleSentence.GetSymbols();
                 //symbols.AddRange(newSymbols);
                 foreach (SentenceElement newSymbol in newSymbols)
                 {
@@ -101,26 +110,6 @@ namespace InferenceEngine
                 }
             }
             return symbols;
-        }
-
-        private List<SentenceElement> GetSymbols(SentenceElement aSentence)
-        {
-            // empty list of symbols. list will be filled with symbols in the sentence tree.
-            List<SentenceElement> symbols = new List<SentenceElement>();
-
-            // Given a sentenceElement, if it is a leaf then it is the only symbol.
-            if(aSentence.Operator is Itself)
-            {
-                symbols.Add(aSentence);
-            }
-            else
-            {
-                // if the operator of sentence isn't a lead type, it will have left and right children. 
-                symbols.AddRange(GetSymbols(aSentence.LeftElement));
-                symbols.AddRange(GetSymbols(aSentence.RightElement));
-            }
-            return symbols;
-
         }
 
         // given a row, return the next row with updated element values (representing binary counting)
