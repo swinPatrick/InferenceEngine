@@ -19,8 +19,29 @@ namespace InferenceEngine
             }
             else { return true; }
         }
-        public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis, List<SentenceElement> aSentenceRequirements)
+
+        // If the right side is being searched for, return left side.
+        public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         {
+            List<SentenceElement> lRequirements = new List<SentenceElement>();
+
+            // if agenda is null, return all elements on both sides
+            if ( aSentenceAgenda ==  null )
+            {
+                lRequirements.AddRange(aSentenceThis.LeftElement.Requires());
+                lRequirements.AddRange(aSentenceThis.RightElement.Requires());
+            }
+            // otherwise, check if right side is the agenda. if it is, return the left side elements.
+            else
+            {
+                lRequirements = aSentenceThis.RightElement.Requires(aSentenceAgenda);
+                if (lRequirements.Count > 0)
+                    lRequirements = aSentenceThis.LeftElement.Requires();
+            }
+
+            return lRequirements;
+
+            /*
             if (aSentenceThis.RightElement == aSentenceAgenda)
             {
                 if (aSentenceThis.Value == 1)
@@ -40,6 +61,7 @@ namespace InferenceEngine
                 }
             }
             return null;
+            */
         }
 
 

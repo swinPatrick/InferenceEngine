@@ -14,9 +14,19 @@ namespace InferenceEngine
             return (aSentence.LeftElement.Check() && aSentence.RightElement.Check());
         }
 
-        public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis, List<SentenceElement> aSentenceRequirements)
+        public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         {
+            List<SentenceElement> lRequires = new List<SentenceElement>();
 
+            // search both children for the required agenda (null will pass along if appropirate).
+            
+            lRequires.AddRange(aSentenceThis.LeftElement.Requires(aSentenceAgenda));
+            lRequires.AddRange(aSentenceThis.RightElement.Requires(aSentenceAgenda));
+            
+
+            return lRequires;
+
+            /*
             if ((aSentenceThis.LeftElement.Value == 1)&&(aSentenceThis.RightElement.Value == 1))
             {
                 aSentenceThis.Value = 1;
@@ -29,9 +39,9 @@ namespace InferenceEngine
             {
                 aSentenceRequirements.AddRange(aSentenceThis.RightElement.Requires(aSentenceAgenda, aSentenceRequirements));
             }
-
-            // TODO: Implement And.Requires
+            
             return aSentenceRequirements;
+            */
         }
 
         /// <summary>

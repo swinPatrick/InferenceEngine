@@ -14,8 +14,19 @@ namespace InferenceEngine
             return aSentence.Value == 1;
         }
 
-        public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis, List<SentenceElement> aSentenceRequires)
+        public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         { 
+            List<SentenceElement> lRequired = new List<SentenceElement>();
+
+            // if agenda is null, or this, return itself.
+            if (aSentenceAgenda == null || aSentenceAgenda == aSentenceThis)
+                lRequired.Add(aSentenceThis);
+            
+            return lRequired;
+
+            // otherwise, check if agenda is this. 
+
+            /*
             if (aSentenceAgenda == aSentenceThis)
             {
                 aSentenceThis.Value = 1;
@@ -26,7 +37,7 @@ namespace InferenceEngine
                 aSentenceRequires.Add(aSentenceThis);
                 return aSentenceRequires;
             }
-            
+            */
         }
 
         public override SentenceElement Apply(SentenceElement aSearchFor, SentenceElement aTarget)

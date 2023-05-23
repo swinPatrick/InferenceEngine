@@ -38,10 +38,10 @@ namespace InferenceEngine
         }
         
 
-        public List<SentenceElement> Requires(SentenceElement aSentence, List<SentenceElement> aSentenceRequirements)
+        public List<SentenceElement> Requires(SentenceElement aSentence = null)
         {
 
-            return Operator.Requires(aSentence, this, aSentenceRequirements);
+            return Operator.Requires(aSentence, this);
         }
 
         public SentenceElement Apply(SentenceElement aSentenceAgenda)
@@ -49,8 +49,37 @@ namespace InferenceEngine
             return Operator.Apply(aSentenceAgenda, this);
         }
 
+
+        public List<SentenceElement> GetSymbols(SentenceElement aSentence = null)
+        {
+            if (aSentence == null)
+                aSentence = this;
+
+            // empty list of symbols. list will be filled with symbols in the sentence tree.
+            List<SentenceElement> symbols = new List<SentenceElement>();
+
+            // Given a sentenceElement, if it is a leaf then it is the only symbol.
+            if (aSentence.Operator is Itself)
+            {
+                symbols.Add(aSentence);
+            }
+            else
+            {
+                // if the operator of sentence isn't a lead type, it will have left and right children. 
+                symbols.AddRange(GetSymbols(aSentence.LeftElement));
+                symbols.AddRange(GetSymbols(aSentence.RightElement));
+            }
+            return symbols;
+        }
+
+        public override string ToString()
+        {
+            return (Value == 1 ? "" : "~") + Name;
+        }
+
     }
 
+    /*
     class SentenceComparer : IEqualityComparer<SentenceElement>
     {
         public bool Equals(SentenceElement x, SentenceElement y)
@@ -79,4 +108,5 @@ namespace InferenceEngine
             return hashSentenceName ^ hashSentenceValue;
         }
     }
+    */
 }

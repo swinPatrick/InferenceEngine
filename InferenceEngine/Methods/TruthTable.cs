@@ -60,6 +60,7 @@ namespace InferenceEngine
             // KnowledgeBase is now a list of all rows that satisfy KB
         }
 
+        
         public override string Ask(List<SentenceElement> aQuery)
         {
             Query.AddRange(aQuery);
@@ -85,15 +86,16 @@ namespace InferenceEngine
                 return "NO";
         }
 
+
         // given a list of SentenceElements, return a list of SentenceElements that are symbols
-        private List<SentenceElement> GetSymbols(List<SentenceElement> aGivenListOfSentences)
+        public List<SentenceElement> GetSymbols(List<SentenceElement> aGivenListOfSentences)
         {
             // create a new empty list to hold found symbols
             List<SentenceElement> symbols = new List<SentenceElement>();
 
             foreach (SentenceElement aSingleSentence in aGivenListOfSentences)
             {
-                List<SentenceElement> newSymbols = GetSymbols(aSingleSentence);
+                List<SentenceElement> newSymbols = aSingleSentence.GetSymbols();
                 //symbols.AddRange(newSymbols);
                 foreach (SentenceElement newSymbol in newSymbols)
                 {
@@ -105,6 +107,7 @@ namespace InferenceEngine
             return symbols;
         }
 
+        /*
         private List<SentenceElement> GetSymbols(SentenceElement aSentence)
         {
             // empty list of symbols. list will be filled with symbols in the sentence tree.
@@ -122,8 +125,8 @@ namespace InferenceEngine
                 symbols.AddRange(GetSymbols(aSentence.RightElement));
             }
             return symbols;
-
         }
+        */
 
         // given a row, return the next row with updated element values (representing binary counting)
         private List<SentenceElement> NextRow(List<SentenceElement> aRow)

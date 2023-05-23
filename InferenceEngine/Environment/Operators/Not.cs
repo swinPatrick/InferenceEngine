@@ -14,15 +14,15 @@ namespace InferenceEngine
             return aSentence.Value == 0;
         }
 
-        public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis, List<SentenceElement> aSentenceRequires)
+        public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         {
-            List<SentenceElement> output = new List<SentenceElement>();
-            if (aSentenceThis.LeftElement.Value == 0)
-            {
-                output.AddRange(aSentenceThis.Requires(aSentenceAgenda, aSentenceRequires));
-            }
-            //return aSentenceRequires.AddRange(output);
-            return null;
+            List<SentenceElement> lRequired = new List<SentenceElement>();
+
+            // if agenda is null, or this, return itself.
+            if (aSentenceAgenda == null || aSentenceAgenda == aSentenceThis)
+                lRequired.Add(aSentenceThis);
+
+            return lRequired;
         }
 
         public override SentenceElement Apply(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
