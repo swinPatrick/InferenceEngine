@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace InferenceEngine
 {
     public abstract class Operator
-    {   
+    {
+        public string Symbol { get; internal set; }
+
         public abstract bool Check(SentenceElement aSentence);
 
         /// <summary>

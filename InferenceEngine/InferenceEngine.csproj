@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Environment\Operators\And.cs" />
+    <Compile Include="FileReader - Copy.cs" />
     <Compile Include="Methods\BC.cs" />
     <Compile Include="Environment\Operators\Entails.cs" />
     <Compile Include="Methods\FC.cs" />

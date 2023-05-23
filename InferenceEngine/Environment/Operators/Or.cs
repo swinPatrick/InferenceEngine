@@ -8,6 +8,11 @@ namespace InferenceEngine
 {
     public class Or : Operator
     {
+        public Or()
+        {
+            Symbol = "|";
+        }
+
         public override bool Check(SentenceElement aSentence)
         {
             // returns true if either left or right element is true

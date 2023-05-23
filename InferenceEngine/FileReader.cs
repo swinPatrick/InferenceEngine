@@ -50,8 +50,6 @@ namespace InferenceEngine
                                 // if left has a logic section - currently doesn't work for multiple operators on left side but dont believe this is nessersary till general KB, this can be implemented with changing this to be a called function and recursivly called baesd on brackets
                                 if (left_operators.Success)
                                 {
-
-
                                     string[] temp_sec_set = Regex.Split(temp_Section[0], @"\s*(\&|\|\||~)\s*");
                                     switch (left_operators.Value)
                                     {
@@ -73,15 +71,15 @@ namespace InferenceEngine
                                     }
 
                                     //Will probably implement a deeping loop on every success match = true check again with a whole loop and go 1 lvl deeper, then add to stack and op off one by one as we resurface
-                                    temp_store.LeftElement.LeftElement = new SentenceElement(temp_sec_set[0], new Itself());
-                                    temp_store.LeftElement.RightElement = new SentenceElement(temp_sec_set[2], new Itself());
+                                    temp_store.LeftElement.LeftElement = new SentenceElement(temp_sec_set[0], new Itself(), 1);
+                                    temp_store.LeftElement.RightElement = new SentenceElement(temp_sec_set[2], new Itself(), 1);
 
-                                    temp_store.RightElement = new SentenceElement(temp_Section[2], new Itself());
+                                    temp_store.RightElement = new SentenceElement(temp_Section[2], new Itself(), 1);
                                 }
                                 else
                                 {
-                                    temp_store.LeftElement = new SentenceElement(temp_Section[0], new Itself());
-                                    temp_store.RightElement = new SentenceElement(temp_Section[2], new Itself());
+                                    temp_store.LeftElement = new SentenceElement(temp_Section[0], new Itself(), 1);
+                                    temp_store.RightElement = new SentenceElement(temp_Section[2], new Itself(), 1);
                                 }
 
                             }

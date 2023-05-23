@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +10,11 @@ namespace InferenceEngine
 {
     public class And : Operator
     {
+        public And() 
+        {
+            Symbol = "&";
+        }
+
         public override bool Check(SentenceElement aSentence)
         {
             // Both left and right elements must be true

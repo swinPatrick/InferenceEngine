@@ -8,6 +8,11 @@ namespace InferenceEngine
 {
     public class Entails : Operator
     {
+        public Entails()
+        {
+            Symbol = "=>";
+        }
+
         public override bool Check(SentenceElement aSentence)
         {
             // SenteceElement passes in itself. returns value.

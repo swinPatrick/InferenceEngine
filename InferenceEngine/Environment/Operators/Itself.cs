@@ -8,6 +8,11 @@ namespace InferenceEngine
 {
     public class Itself : Operator
     {
+        public Itself()
+        {
+            Symbol = "";
+        }
+
         public override bool Check(SentenceElement aSentence)
         {
             // returns the value of the sentence/node

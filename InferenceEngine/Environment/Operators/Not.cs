@@ -8,6 +8,11 @@ namespace InferenceEngine
 {
     public class Not : Operator
     {
+        public Not()
+        {
+            Symbol = "~";
+        }
+
         public override bool Check(SentenceElement aSentence)
         {
             // Returns the opposite of the value of the sentence/node
