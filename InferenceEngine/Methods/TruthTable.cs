@@ -56,8 +56,6 @@ namespace InferenceEngine
                 }
                 newRow = NextRow(newRow);
             }
-            // TODO: TruthRows are identical.
-            // KnowledgeBase is now a list of all rows that satisfy KB
         }
 
         public override string Ask(List<SentenceElement> aQuery)
