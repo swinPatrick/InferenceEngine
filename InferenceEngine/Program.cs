@@ -58,7 +58,7 @@ namespace InferenceEngine
             methods = new List<Method>();
             methods.Add(new TruthTable());
             methods.Add(new FC());
-            //lMethods.Add(new BackwardChaining());
+            methods.Add(new BC());
         }
 
         private static Method GetMethod(string aName)

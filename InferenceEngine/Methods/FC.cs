@@ -21,37 +21,30 @@ namespace InferenceEngine.Algorithms
 
         public override void Tell(List<SentenceElement> aKB)
         {
+            //Clears the agenda takes
             Agenda.Clear();
             KB = aKB;
-            foreach (SentenceElement knowledge in aKB)
+
+           //Searches for items in KB where first item in tree is itself (character element) not logical
+            foreach (SentenceElement knowledge in KB)
             {
-                if (!knowledge.Name.Contains("~") && !knowledge.Name.Contains("||") &&
-                    !knowledge.Name.Contains("=>") && !knowledge.Name.Contains("&"))
-                {
+                // enqueue if operator is itself or not
+                if( knowledge.Operator.GetType() == typeof(Itself) ||
+                    knowledge.Operator.GetType() == typeof(Not))
                     Agenda.Enqueue(knowledge);
-                }
+                // otherwise set Value to 0
+                else
+                    knowledge.GetSymbols().ForEach(x => x.Value = 0);
             }
 
         }
 
         public override string Ask(List<SentenceElement> aQuery)
         {
+            //From the Ask function takes the query for completion
             Query.AddRange(aQuery);
 
             Inferred.Clear();
-            /*
-             * while (Agenda.Count != 0)
-            {
-                SentenceElement s = Agenda.Dequeue();
-                foreach (SentenceElement q in Query)
-                {
-                    if (s.Name == q.Name)
-                    {
-                        return "Completed s already in knowledge base at start";
-                    }
-                }
-            }
-            */
 
             SentenceElement result = null;
             while (Agenda.Count() != 0)
@@ -69,14 +62,9 @@ namespace InferenceEngine.Algorithms
                             {
                                 string output = "";
                                 Inferred.Add(result);
-                                foreach (SentenceElement s in Inferred)
-                                {
-                                    if (output == "")
-                                    {
-                                        output = output + s.Name;
-                                    }
-                                    else { output = output + ", " + s.Name; }
-                                }
+                                // output is list of inferred symbols as a string. if s.Operator is Not, then add a "!" to the output
+                                output = String.Join(", ", Inferred.Select(x => x.Operator.GetType() == typeof(Not) ? "!" + x.Name : x.Name));
+
                                 return "YES: " + output;
                             }
                         }
