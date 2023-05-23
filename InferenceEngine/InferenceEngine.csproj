@@ -44,12 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Environment\Operators\And.cs" />
-    <Compile Include="FileReader - Copy.cs" />
+    <Compile Include="FileReader.cs" />
     <Compile Include="Methods\BC.cs" />
     <Compile Include="Environment\Operators\Entails.cs" />
     <Compile Include="Methods\FC.cs" />
     <Compile Include="Environment\Operators\Itself.cs" />
-    <Compile Include="FileReader.cs" />
     <Compile Include="Methods\Method.cs" />
     <Compile Include="Environment\Operators\Not.cs" />
     <Compile Include="Environment\Operator.cs" />

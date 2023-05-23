@@ -24,7 +24,10 @@ namespace InferenceEngine
             List<SentenceElement> lRequired = new List<SentenceElement>();
 
             // if agenda is null, or this, return itself.
-            if (aSentenceAgenda == null || aSentenceAgenda == aSentenceThis)
+            if (aSentenceAgenda == null ||
+                (aSentenceAgenda.Name == aSentenceThis.Name
+                && aSentenceAgenda.Value == aSentenceThis.Value
+                && aSentenceThis.ParentElement != aSentenceThis)) //make sure it's not the root node
                 lRequired.Add(aSentenceThis);
 
             return lRequired;

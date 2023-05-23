@@ -74,7 +74,7 @@ namespace InferenceEngine.Algorithms
                     List<SentenceElement> newRequirements = rule.Requires(requiredSymbol);
 
                     // if there are required symbols, enqueue them.
-                    if(newRequirements != null)
+                    if(newRequirements.Count > 0)
                     {
                         foreach(SentenceElement s in newRequirements)
                             lAgenda.Enqueue((SentenceElement)s);
@@ -90,35 +90,6 @@ namespace InferenceEngine.Algorithms
                 return "YES: " + inferredSymbols;
             else
                 return "NO";
-
-            /*
-            foreach(SentenceElement s in aQuery)
-            {
-                // what needs to be found
-                SentenceElement query = s as SentenceElement;
-                
-                // search KB for query
-                foreach(SentenceElement rule in KB)
-                {
-                    if(rule.Requires(query) != null)
-                    {
-                        // if rule is required to satisfy query, add it to the left side.
-                        SentenceElement newLink = new SentenceElement("||", new Or());
-
-                        // update newLink children = past requirement OR new requirement
-                        newLink.RightElement = query.LeftElement;
-                        newLink.LeftElement = rule;
-
-                        // update past locations with new parent
-                        rule.ParentElement = newLink;
-                        query.LeftElement.ParentElement = newLink;
-
-                        // add newLink as child of past requirement.
-                        query.LeftElement = newLink;
-                    }
-                }
-            }
-            */
         }
     }
 }

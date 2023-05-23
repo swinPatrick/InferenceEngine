@@ -24,25 +24,14 @@ namespace InferenceEngine
             List<SentenceElement> lRequired = new List<SentenceElement>();
 
             // if agenda is null, or this, return itself.
-            if (aSentenceAgenda == null || aSentenceAgenda == aSentenceThis)
+            if (aSentenceAgenda == null || 
+                (aSentenceAgenda.Name == aSentenceThis.Name 
+                && aSentenceAgenda.Value == aSentenceThis.Value
+                && aSentenceThis.ParentElement != aSentenceThis)) //make sure it's not the root node
                 lRequired.Add(aSentenceThis);
             
             return lRequired;
 
-            // otherwise, check if agenda is this. 
-
-            /*
-            if (aSentenceAgenda == aSentenceThis)
-            {
-                aSentenceThis.Value = 1;
-                return null;
-            }
-            else
-            {
-                aSentenceRequires.Add(aSentenceThis);
-                return aSentenceRequires;
-            }
-            */
         }
 
         public override SentenceElement Apply(SentenceElement aSearchFor, SentenceElement aTarget)

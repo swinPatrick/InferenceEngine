@@ -23,13 +23,16 @@ namespace InferenceEngine.Algorithms
         {
             Agenda.Clear();
             KB = aKB;
-            foreach (SentenceElement knowledge in aKB)
+
+            foreach (SentenceElement knowledge in KB)
             {
-                if (!knowledge.Name.Contains("~") && !knowledge.Name.Contains("||") &&
-                    !knowledge.Name.Contains("=>") && !knowledge.Name.Contains("&"))
-                {
+                // enqueue if operator is itself or not
+                if( knowledge.Operator.GetType() == typeof(Itself) ||
+                    knowledge.Operator.GetType() == typeof(Not))
                     Agenda.Enqueue(knowledge);
-                }
+                // otherwise set Value to 0
+                else
+                    knowledge.GetSymbols().ForEach(x => x.Value = 0);
             }
 
         }
@@ -39,19 +42,6 @@ namespace InferenceEngine.Algorithms
             Query.AddRange(aQuery);
 
             Inferred.Clear();
-            /*
-             * while (Agenda.Count != 0)
-            {
-                SentenceElement s = Agenda.Dequeue();
-                foreach (SentenceElement q in Query)
-                {
-                    if (s.Name == q.Name)
-                    {
-                        return "Completed s already in knowledge base at start";
-                    }
-                }
-            }
-            */
 
             SentenceElement result = null;
             while (Agenda.Count() != 0)

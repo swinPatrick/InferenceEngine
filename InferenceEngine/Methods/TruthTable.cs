@@ -107,27 +107,6 @@ namespace InferenceEngine
             return symbols;
         }
 
-        /*
-        private List<SentenceElement> GetSymbols(SentenceElement aSentence)
-        {
-            // empty list of symbols. list will be filled with symbols in the sentence tree.
-            List<SentenceElement> symbols = new List<SentenceElement>();
-
-            // Given a sentenceElement, if it is a leaf then it is the only symbol.
-            if(aSentence.Operator is Itself)
-            {
-                symbols.Add(aSentence);
-            }
-            else
-            {
-                // if the operator of sentence isn't a lead type, it will have left and right children. 
-                symbols.AddRange(GetSymbols(aSentence.LeftElement));
-                symbols.AddRange(GetSymbols(aSentence.RightElement));
-            }
-            return symbols;
-        }
-        */
-
         // given a row, return the next row with updated element values (representing binary counting)
         private List<SentenceElement> NextRow(List<SentenceElement> aRow)
         {
