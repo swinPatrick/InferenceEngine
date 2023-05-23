@@ -18,6 +18,7 @@ namespace InferenceEngine
             InitMethods();
             // iengine <method> <filename>
 
+            // check if input is valid
             if (args.Length < 2)
             {
                 Console.WriteLine("Usage: iengine <method> <filename>");
@@ -38,16 +39,17 @@ namespace InferenceEngine
 
             // Set variable that were read by document.
             FileReader.ReadFile(filename, KnowledgeBase, Query);
+            // otherwise, if filereader output is required:
+            //Console.WriteLine(FileReader.ReadFile(filename, KnowledgeBase, Query));
 
             // Set Method based on input <method>
             Method engineMethod = GetMethod(method);
 
+            // Tell the engine the knowledgebase
             engineMethod.Tell(KnowledgeBase);
 
+            // Ask the engine the query
             Console.WriteLine(engineMethod.Ask(Query));
-
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
         }
        
 
