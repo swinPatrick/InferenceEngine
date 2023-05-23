@@ -59,14 +59,9 @@ namespace InferenceEngine.Algorithms
                             {
                                 string output = "";
                                 Inferred.Add(result);
-                                foreach (SentenceElement s in Inferred)
-                                {
-                                    if (output == "")
-                                    {
-                                        output = output + s.Name;
-                                    }
-                                    else { output = output + ", " + s.Name; }
-                                }
+                                // output is list of inferred symbols as a string. if s.Operator is Not, then add a "!" to the output
+                                output = String.Join(", ", Inferred.Select(x => x.Operator.GetType() == typeof(Not) ? "!" + x.Name : x.Name));
+
                                 return "YES: " + output;
                             }
                         }

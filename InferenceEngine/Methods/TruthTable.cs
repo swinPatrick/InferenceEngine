@@ -28,6 +28,13 @@ namespace InferenceEngine
             KB = aKB;
             symbols = GetSymbols(aKB);
 
+            //update KB to be false
+            foreach(SentenceElement rule in KB)
+            {
+                if(rule.Operator.GetType() != typeof(Itself) && rule.Operator.GetType() != typeof(Not))
+                    rule.GetSymbols().ForEach(x => x.Value = 0);
+            }
+
             // first row of truth table is all false
             List<SentenceElement> baseRow = new List<SentenceElement>();
             foreach (SentenceElement symbol in symbols)
@@ -50,7 +57,7 @@ namespace InferenceEngine
             double rowSum = Math.Pow(2, symbols.Count);
             for (int i = 0; i < rowSum; i++)
             {
-                if (CheckRow(newRow, aKB))
+                if (CheckRow(newRow, KB))
                 {
                     TruthRows.Add(newRow.Select(s=> new SentenceElement(s.Name, aValue: s.Value)).ToList());
                 }

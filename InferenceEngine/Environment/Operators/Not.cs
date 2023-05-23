@@ -33,12 +33,17 @@ namespace InferenceEngine
             return lRequired;
         }
 
-        public override SentenceElement Apply(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
+        public override SentenceElement Apply(SentenceElement aSearchFor, SentenceElement aTarget)
         {
-            if (aSentenceThis.LeftElement.Apply(aSentenceAgenda) == null)
+            if (aTarget.Name == aSearchFor.Name)
             {
-                return aSentenceThis;
+                aTarget.Value = aSearchFor.Value; // might want to change value to 0.
             }
+            if (aTarget.Value == 0)
+            {
+                return aTarget;
+            }
+
             else return null;
         }
     }

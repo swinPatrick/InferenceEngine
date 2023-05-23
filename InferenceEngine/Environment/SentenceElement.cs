@@ -59,7 +59,7 @@ namespace InferenceEngine
             List<SentenceElement> symbols = new List<SentenceElement>();
 
             // Given a sentenceElement, if it is a leaf then it is the only symbol.
-            if (aSentence.Operator is Itself)
+            if (aSentence.Operator is Itself || aSentence.Operator is Not)
             {
                 symbols.Add(aSentence);
             }

@@ -29,12 +29,12 @@ namespace InferenceEngine
 
             if(side.Length == 1)
             {
-                side = side[0].Split('~');
+                side = Regex.Split(side[0], @"\s*(~)\s*");
                 // if length is 1, no ~
                 if (side.Length == 1)
                     newElement = new SentenceElement(side[0], aValue: 1);
                 else
-                    newElement = new SentenceElement(side[1], new Not());
+                    newElement = new SentenceElement(side[2], new Not());
             }
             else
             {

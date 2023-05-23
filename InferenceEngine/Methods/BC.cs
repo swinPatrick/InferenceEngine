@@ -84,7 +84,8 @@ namespace InferenceEngine.Algorithms
 
             // lAgenda is now empty, lInferred contains the list of required symbols.
             string inferredSymbols = "";
-            inferredSymbols = String.Join(", ", lInferred);
+            // if there are inferred symbols, add them to the output string. Add a "!" if the operator is Not.
+            inferredSymbols = String.Join(", ", lInferred.Select(x => x.Operator.GetType() == typeof(Not) ? "!" + x.Name : x.Name));
 
             if (lInferred.Count > 0)
                 return "YES: " + inferredSymbols;
