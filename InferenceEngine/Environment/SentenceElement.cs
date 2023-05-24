@@ -74,39 +74,17 @@ namespace InferenceEngine
 
         public override string ToString()
         {
-            return (Value == 1 ? "" : "~") + Name;
+            string s = "";
+            if( Operator is Itself ||
+                Operator is Not)
+                s = (Value == 1 ? "" : "~") + Name;
+            else
+            {
+                s = "(" + LeftElement.ToString() + Operator.Symbol + RightElement.ToString() + ")";
+            }
+            return s;
         }
 
     }
 
-    /*
-    class SentenceComparer : IEqualityComparer<SentenceElement>
-    {
-        public bool Equals(SentenceElement x, SentenceElement y)
-        {
-            // sentences are equal if their name and value are equal
-            if(ReferenceEquals(x, y)) return true;
-
-            // check whether any of the compared objects is null
-            if(ReferenceEquals(x, null) || ReferenceEquals(y, null)) return false;
-
-            // check whether sentence properties are equal
-            return
-                x.Name == y.Name &&
-                x.Value == y.Value;
-        }
-
-        public int GetHashCode(SentenceElement obj)
-        {
-            // check whether the object is null
-            if(obj == null) return 0;
-
-            int hashSentenceName = obj.Name == null ? 0 : obj.Name.GetHashCode();
-
-            int hashSentenceValue = obj.Value.GetHashCode();
-
-            return hashSentenceName ^ hashSentenceValue;
-        }
-    }
-    */
 }

@@ -46,7 +46,7 @@ namespace InferenceEngine
                     pattern = "(" + op.Symbol + ")";
                     Regex rgx = new Regex(pattern);
                     // apply the split to the string. we want 2 sides from it.
-                    side = rgx.Split(aElementAsString, 3);
+                    side = rgx.Split(aElementAsString, 2);
                     // populate element if split was effective (side.Length>1)
                     if( side.Length > 1)
                     {
@@ -104,7 +104,8 @@ namespace InferenceEngine
                             if (strRule == "")
                                 continue;
                             lRow.Add(StringToSentenceElement(strRule));
-                            consoleOutput += strRule + "\n";
+                            //consoleOutput += strRule + "\n";
+                            consoleOutput += lRow.Last().ToString() + "\n";
                         }
 
                         // add to either KB or Query
