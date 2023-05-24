@@ -32,54 +32,53 @@ namespace InferenceEngine.Algorithms
             List<SentenceElement> lInferred = new List<SentenceElement>();
 
             // Queue of symbol cases which must be met.
-            Queue<SentenceElement> lAgenda = new Queue<SentenceElement>();
-            
+            Stack<SentenceElement> lAgenda = new Stack<SentenceElement>();
 
-            // Add query values to the Agenda
-            foreach (SentenceElement e in Query)
+
+            // lidt of symbols in KB where type is itself or not
+            List<SentenceElement> lGivenSymbols = new List<SentenceElement>(lAgenda.Where(x => x.Operator.GetType() == typeof(Itself) || x.Operator.GetType() == typeof(Not)));
+
+            foreach (SentenceElement givenQuery in Query)
             {
-                List<SentenceElement> eSymbols = new List<SentenceElement>();
-                eSymbols.AddRange(e.GetSymbols());
-                foreach(SentenceElement s in eSymbols)
+                // Add all symbols to the agenda
+                foreach (SentenceElement s in givenQuery.GetSymbols())
                 {
-                    lAgenda.Enqueue(s);
+                    s.Value = 0;
+                    lAgenda.Push(s);
                 }
-            }
-            
-            // Go through agenda (of things that are required), if something is required, add it to the list.
-            while(lAgenda.Count > 0)
-            {
-                SentenceElement requiredSymbol = lAgenda.Dequeue();
-
-                // check for contradictory requirements
-                foreach(SentenceElement s in lInferred)
+                
+                // process agenda
+                do
                 {
-                    if(s.Name == requiredSymbol.Name)
+                    // dequeue symbol. symbol is direct reference to the symbol under the rule which was added. 
+                    SentenceElement dequeuedSymbol = lAgenda.Pop();
+
+                    lInferred.Add(dequeuedSymbol); // add symbol to inferred list
+
+                    // where dequeue value is not 1 (not already inferred), find rules which infer it and requirements to dequeue
+                    foreach (SentenceElement rule in KB.Where(r => r.Requires(dequeuedSymbol).Count > 0)) //  dequeuSymbol is contained in the rule
                     {
-                        if(s.Value ==  requiredSymbol.Value)
-                            continue;
-                        else
+                        List<SentenceElement> lRuleRequirements = new List<SentenceElement>(rule.Requires(dequeuedSymbol)); // get the requirements for the rule
+                        if(lRuleRequirements.Count == 1) // if there is 1 requirement, it is a fact
                         {
-                            // Catch contradictory requirements here. e.g. A && ~A
+                            // check if givenQuery is solved.
+                            if( givenQuery.ParentElement.Check() )
+                            {
+                                // if it is solved, clear the agenda and continue.
+                                lAgenda.Clear();
+                                break;
+                            }
+                        }
+                        else // if there is more than 1 requirement, it is a rule
+                        {
+                            // left side of rule replaces dequeue symbol in tree.
+                            dequeuedSymbol.ParentElement.LeftElement = rule.LeftElement;
+
+                            // add requirements to agenda
+                            rule.LeftElement.GetSymbols().ForEach(x => lAgenda.Push(x));
                         }
                     }
-                }
-
-                lInferred.Add(requiredSymbol);
-
-                // now ask for what is required to make requiredSymbol satisfied.
-                foreach(SentenceElement rule in KB)
-                {
-                    // get list of required symbols
-                    List<SentenceElement> newRequirements = rule.Requires(requiredSymbol);
-
-                    // if there are required symbols, enqueue them.
-                    if(newRequirements.Count > 0)
-                    {
-                        foreach(SentenceElement s in newRequirements)
-                            lAgenda.Enqueue((SentenceElement)s);
-                    }
-                }
+                } while (lAgenda.Count > 0);
             }
 
             // lAgenda is now empty, lInferred contains the list of required symbols.
@@ -91,6 +90,14 @@ namespace InferenceEngine.Algorithms
                 return "YES: " + inferredSymbols;
             else
                 return "NO";
+        }
+
+        private SentenceElement AddJoint(SentenceElement aNewRequisite, SentenceElement aBaseElement, Operator @operator)
+        {
+            SentenceElement lJoiner =  new SentenceElement(@operator.Symbol, @operator);
+            lJoiner.LeftElement = aNewRequisite;
+            lJoiner.RightElement = aBaseElement;
+            return lJoiner;
         }
     }
 }
