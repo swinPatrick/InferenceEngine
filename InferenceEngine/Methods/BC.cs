@@ -43,8 +43,9 @@ namespace InferenceEngine.Algorithms
                 // Add all symbols to the agenda
                 foreach (SentenceElement s in givenQuery.GetSymbols())
                 {
-                    s.Value = 0;
-                    lAgenda.Push(s);
+                    s.ParentElement = new SentenceElement("&", new And()); // add a parent element to the symbol. This is the root node of the tree.
+                    s.ParentElement.RightElement = s; // add the symbol to the right side of the parent element.
+                    lAgenda.Push(s); // add the symbol to the agenda.
                 }
                 
                 // process agenda
@@ -59,13 +60,15 @@ namespace InferenceEngine.Algorithms
                     foreach (SentenceElement rule in KB.Where(r => r.Requires(dequeuedSymbol).Count > 0)) //  dequeuSymbol is contained in the rule
                     {
                         List<SentenceElement> lRuleRequirements = new List<SentenceElement>(rule.Requires(dequeuedSymbol)); // get the requirements for the rule
-                        if(lRuleRequirements.Count == 1) // if there is 1 requirement, it is a fact
+                        // if requirement parent is itself, it is a fact.
+                        if (lRuleRequirements[0].ParentElement == lRuleRequirements[0])
                         {
                             // check if givenQuery is solved.
-                            if( givenQuery.ParentElement.Check() )
+                            if (givenQuery.GetSymbols().All(x => x.ParentElement.Check())) // if all symbols are true, it is solved.
                             {
                                 // if it is solved, clear the agenda and continue.
                                 lAgenda.Clear();
+                                // break out of foreach loop
                                 break;
                             }
                         }
@@ -79,6 +82,11 @@ namespace InferenceEngine.Algorithms
                         }
                     }
                 } while (lAgenda.Count > 0);
+
+                if(givenQuery.GetSymbols().Any(x => x.ParentElement.LeftElement == null || !x.ParentElement.Check()))
+                {
+                    return "NO";
+                }
             }
 
             // lAgenda is now empty, lInferred contains the list of required symbols.
