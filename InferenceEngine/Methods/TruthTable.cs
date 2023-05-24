@@ -63,6 +63,16 @@ namespace InferenceEngine
                 }
                 newRow = NextRow(newRow);
             }
+
+            string output = "";
+            // output TT table
+            output += String.Join("\t", symbols.Select(x => x.Name)) + "\n";
+            foreach (List<SentenceElement> row in TruthRows)
+            {
+                output += String.Join("\t", row.Select(x => x.Value));
+                output += "\n";
+            }
+            Console.WriteLine(output);
         }
 
         
