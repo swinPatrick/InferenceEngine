@@ -83,6 +83,7 @@ namespace InferenceEngine.Algorithms
                     }
                 } while (lAgenda.Count > 0);
 
+                // If sibling is null, or no parent conditions are true, no solution was found.
                 if(givenQuery.GetSymbols().Any(x => x.ParentElement.LeftElement == null || !x.ParentElement.Check()))
                 {
                     return "NO";
@@ -98,14 +99,6 @@ namespace InferenceEngine.Algorithms
                 return "YES: " + inferredSymbols;
             else
                 return "NO";
-        }
-
-        private SentenceElement AddJoint(SentenceElement aNewRequisite, SentenceElement aBaseElement, Operator @operator)
-        {
-            SentenceElement lJoiner =  new SentenceElement(@operator.Symbol, @operator);
-            lJoiner.LeftElement = aNewRequisite;
-            lJoiner.RightElement = aBaseElement;
-            return lJoiner;
         }
     }
 }
