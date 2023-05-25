@@ -6,10 +6,18 @@ using System.Threading.Tasks;
 
 namespace InferenceEngine
 {
+    // This abstract class defines how different node types can be interacted with in a similar way.
     public abstract class Operator
     {
+        // Symbol is how the node type is recognised as a astring.
         public string Symbol { get; internal set; }
-
+        
+        /// <summary>
+        /// This function checked if the node requirements have been met and returns true or false.
+        /// </summary>
+        /// 
+        /// <param name="aSentence">The reference to the node that is being checked.</param>
+        /// <returns>TRUE or FALSE based on whether requirements are met.</returns>
         public abstract bool Check(SentenceElement aSentence);
 
         /// <summary>
@@ -18,9 +26,9 @@ namespace InferenceEngine
         /// Otherwise, return required elements.
         /// </summary>
         /// 
-        /// <param name="aSentenceAgenda"></param>
-        /// <param name="aSentenceThis"></param>
-        /// <returns></returns>
+        /// <param name="aSentenceAgenda">The node being searched for</param>
+        /// <param name="aSentenceThis">reference to the node being searched</param>
+        /// <returns>returns the requirements/preconditions for the sentence/node</returns>
         public abstract List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis);
 
         /// <summary>
@@ -28,7 +36,7 @@ namespace InferenceEngine
         /// </summary>
         /// <param name="aSearchForSentence">The parameters of the sentence being searched for, where .Name matches</param>
         /// <param name="aTargetSentence">The sentence which is being searched.</param>
-        /// <returns></returns>
+        /// <returns>returns the updated reference to the target sentence.</returns>
         public abstract SentenceElement Apply(SentenceElement aSearchForSentence, SentenceElement aTargetSentence);
     }
 }
