@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace InferenceEngine.Algorithms
             // copy ASK
             Query = aQuery.ToList();
 
-            List<SentenceElement> lInferred = new List<SentenceElement>();
+            List<SentenceElement> lCheckedNodes = new List<SentenceElement>();
 
             // Queue of symbol cases which must be met.
             Stack<SentenceElement> lAgenda = new Stack<SentenceElement>();
@@ -37,6 +38,12 @@ namespace InferenceEngine.Algorithms
 
             // lidt of symbols in KB where type is itself or not
             List<SentenceElement> lGivenSymbols = new List<SentenceElement>(lAgenda.Where(x => x.Operator.GetType() == typeof(Itself) || x.Operator.GetType() == typeof(Not)));
+
+            // reference between symbols and the required rule to infer them.
+            Dictionary<SentenceElement, SentenceElement> lInferenceLink = new Dictionary<SentenceElement, SentenceElement>();
+
+            // list of symbols required to solve the query.
+            List<SentenceElement> lRequired = new List<SentenceElement>();
 
             foreach (SentenceElement givenQuery in Query)
             {
@@ -54,7 +61,7 @@ namespace InferenceEngine.Algorithms
                     // dequeue symbol. symbol is direct reference to the symbol under the rule which was added. 
                     SentenceElement dequeuedSymbol = lAgenda.Pop();
 
-                    lInferred.Add(dequeuedSymbol); // add symbol to inferred list
+                    lCheckedNodes.Add(dequeuedSymbol); // add symbol to inferred list
 
                     // where dequeue value is not 1 (not already inferred), find rules which infer it and requirements to dequeue
                     foreach (SentenceElement rule in KB.Where(r => r.Requires(dequeuedSymbol).Count > 0)) //  dequeuSymbol is contained in the rule
@@ -68,14 +75,36 @@ namespace InferenceEngine.Algorithms
                             {
                                 // if it is solved, clear the agenda and continue.
                                 lAgenda.Clear();
+
+                                // loop through inferencelink dictionary for .requires to build requiredForQuery list.
+                                lRequired.Add(dequeuedSymbol);
+
+                                // add the last element of the list to the requiredForQuery list until the last element is not in the dictionary.
+                                if(lInferenceLink.ContainsKey(lRequired.Last().ParentElement))
+                                { while (lInferenceLink.ContainsKey(lRequired.Last().ParentElement))
+                                    {
+                                        lRequired.Add(lInferenceLink[lRequired.Last().ParentElement]);
+                                    }
+                                }
+                                else
+                                {
+                                    while (lInferenceLink.ContainsKey(lRequired.Last()))
+                                    {
+                                        lRequired.Add(lInferenceLink[lRequired.Last()]);
+                                    }
+                                }
                                 // break out of foreach loop
                                 break;
                             }
                         }
                         else // if there is more than 1 requirement, it is a rule
                         {
+                            lInferenceLink.Add(rule.LeftElement, dequeuedSymbol); // add the rule to the inference link
+                            //lInferenceLink.Add(dequeuedSymbol, rule.LeftElement); // add the rule to the inference link
+
                             // left side of rule replaces dequeue symbol in tree.
                             dequeuedSymbol.ParentElement.LeftElement = rule.LeftElement;
+                            
 
                             // add requirements to agenda
                             rule.LeftElement.GetSymbols().ForEach(x => lAgenda.Push(x));
@@ -92,10 +121,10 @@ namespace InferenceEngine.Algorithms
 
             // lAgenda is now empty, lInferred contains the list of required symbols.
             string inferredSymbols = "";
-            // if there are inferred symbols, add them to the output string. Add a "!" if the operator is Not.
-            inferredSymbols = String.Join(", ", lInferred.Select(x => x.Operator.GetType() == typeof(Not) ? "!" + x.Name : x.Name));
+            // if there are inferred symbols, add them to the output string. 
+            inferredSymbols = String.Join(", ", lRequired.Select(x => x.Operator.Symbol + x.Name));
 
-            if (lInferred.Count > 0)
+            if (lCheckedNodes.Count > 0)
                 return "YES: " + inferredSymbols;
             else
                 return "NO";

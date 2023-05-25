@@ -10,7 +10,7 @@ namespace InferenceEngine
     {
         public Or()
         {
-            Symbol = "|";
+            Symbol = @"\|\|";
         }
 
         public override bool Check(SentenceElement aSentence)
@@ -39,6 +39,7 @@ namespace InferenceEngine
                 lRequires.AddRange(aSentenceThis.LeftElement.Requires(aSentenceAgenda));
                 lRequires.AddRange(aSentenceThis.RightElement.Requires(aSentenceAgenda));
             }
+
 
 
             return lRequires;
