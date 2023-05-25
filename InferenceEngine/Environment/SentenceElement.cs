@@ -11,7 +11,7 @@ namespace InferenceEngine
     public class SentenceElement
     {
 
-        public string Name { get; }
+        public string Name { get; set; }
         public Operator Operator { get; set; }
         public int Value { get; set; }
         public SentenceElement LeftElement { get; set; }
