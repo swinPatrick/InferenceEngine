@@ -53,14 +53,20 @@ namespace InferenceEngine
             TruthRows = new List<List<SentenceElement>>();
 
             List<SentenceElement> newRow = new List<SentenceElement>(baseRow);
-
+            
+            // the number of possible rows = 2^symbols.
             double rowSum = Math.Pow(2, symbols.Count);
+            
+            // iterate through possible rows
             for (int i = 0; i < rowSum; i++)
             {
+                // check row passes KB
                 if (CheckRow(newRow, KB))
                 {
+                    // add row to truth table
                     TruthRows.Add(newRow.Select(s=> new SentenceElement(s.Name, aValue: s.Value)).ToList());
                 }
+                // progress to next row to test
                 newRow = NextRow(newRow);
             }
         }

@@ -45,33 +45,12 @@ namespace InferenceEngine
             }
 
             return lRequirements;
-
-            /*
-            if (aSentenceThis.RightElement == aSentenceAgenda)
-            {
-                if (aSentenceThis.Value == 1)
-                {
-                    return null;
-                }
-                List <SentenceElement> result = new List<SentenceElement>();
-                if (aSentenceThis.LeftElement.Value == 1)
-                {
-                    aSentenceThis.Value = 1;
-                    return null;
-                }
-                else
-                {
-                    aSentenceRequirements.AddRange(aSentenceThis.LeftElement.Requires(aSentenceAgenda, aSentenceRequirements));
-                    return aSentenceRequirements;
-                }
-            }
-            return null;
-            */
         }
 
 
         public override SentenceElement Apply(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         {
+            // search both sides fo whether they are the sentence item being looked for, if left has been updated, return tight side.
             bool lLeftChanged = aSentenceThis.LeftElement.Apply(aSentenceAgenda) != null;
             bool lRightChanged = aSentenceThis.RightElement.Apply(aSentenceAgenda) != null;
 

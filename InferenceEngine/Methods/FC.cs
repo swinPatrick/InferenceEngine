@@ -21,9 +21,11 @@ namespace InferenceEngine.Algorithms
 
         public override void Tell(List<SentenceElement> aKB)
         {
+            //Clears the agenda takes
             Agenda.Clear();
             KB = aKB;
 
+           //Searches for items in KB where first item in tree is itself (character element) not logical
             foreach (SentenceElement knowledge in KB)
             {
                 // enqueue if operator is itself or not
@@ -39,6 +41,7 @@ namespace InferenceEngine.Algorithms
 
         public override string Ask(List<SentenceElement> aQuery)
         {
+            //From the Ask function takes the query for completion
             Query.AddRange(aQuery);
 
             Inferred.Clear();
