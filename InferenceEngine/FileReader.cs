@@ -104,6 +104,7 @@ namespace InferenceEngine
                             if (strRule == "")
                                 continue;
                             lRow.Add(StringToSentenceElement(strRule));
+
                             //consoleOutput += strRule + "\n";
                             consoleOutput += lRow.Last().ToString() + "\n";
                         }

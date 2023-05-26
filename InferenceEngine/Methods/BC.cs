@@ -21,6 +21,14 @@ namespace InferenceEngine.Algorithms
         public override void Tell(List<SentenceElement> aKB)
         {
             KB = aKB.ToList();
+            //foreach rule in KB: if rule is not a fact, set left element symbols to 0.
+            foreach (SentenceElement rule in KB)
+            {
+                if (rule.Operator.Symbol != "")
+                {
+                    rule.LeftElement.GetSymbols().ForEach(x => x.Value = 0);
+                }
+            }
         }
 
         // Construct a tree and figure out what is required.
@@ -34,10 +42,6 @@ namespace InferenceEngine.Algorithms
 
             // Queue of symbol cases which must be met.
             Stack<SentenceElement> lAgenda = new Stack<SentenceElement>();
-
-
-            // lidt of symbols in KB where type is itself or not
-            List<SentenceElement> lGivenSymbols = new List<SentenceElement>(lAgenda.Where(x => x.Operator.GetType() == typeof(Itself) || x.Operator.GetType() == typeof(Not)));
 
             // reference between symbols and the required rule to infer them.
             Dictionary<SentenceElement, SentenceElement> lInferenceLink = new Dictionary<SentenceElement, SentenceElement>();
@@ -54,57 +58,66 @@ namespace InferenceEngine.Algorithms
                     s.ParentElement.RightElement = s; // add the symbol to the right side of the parent element.
                     lAgenda.Push(s); // add the symbol to the agenda.
                 }
-                
+
                 // process agenda
                 do
                 {
-                    // dequeue symbol. symbol is direct reference to the symbol under the rule which was added. 
                     SentenceElement dequeuedSymbol = lAgenda.Pop();
 
-                    lCheckedNodes.Add(dequeuedSymbol); // add symbol to inferred list
+                    //lCheckedNodes.Add(dequeuedSymbol); // add symbol to checked list
 
-                    // where dequeue value is not 1 (not already inferred), find rules which infer it and requirements to dequeue
-                    foreach (SentenceElement rule in KB.Where(r => r.Requires(dequeuedSymbol).Count > 0)) //  dequeuSymbol is contained in the rule
+
+                    // find rules which effect the dequeued symbol
+                    foreach (SentenceElement rule in KB.Where(r => r.Requires(dequeuedSymbol).Count > 0))
                     {
+                        // create a list of the requirements for the rule
                         List<SentenceElement> lRuleRequirements = new List<SentenceElement>(rule.Requires(dequeuedSymbol)); // get the requirements for the rule
-                        // if requirement parent is itself, it is a fact.
+
+                        // if requirement parent is itself, or not, it is a statement.
                         if (lRuleRequirements[0].ParentElement == lRuleRequirements[0])
                         {
+
+                            SentenceElement lastChecked = lRuleRequirements[0];
+                            while (lInferenceLink.Any(x => lastChecked.Name == x.Key.Name))
+                            { 
+                                KeyValuePair<SentenceElement, SentenceElement> link = lInferenceLink.Where(x => x.Key.Name == lastChecked.Name).First();
+                                link.Key.ParentElement.Apply(lRuleRequirements[0]);
+                                if(link.Key.ParentElement.Check())
+                                    link.Value.Value = 1;
+                                lastChecked = link.Value;
+                            }
+
                             // check if givenQuery is solved.
                             if (givenQuery.GetSymbols().All(x => x.ParentElement.Check())) // if all symbols are true, it is solved.
                             {
                                 // if it is solved, clear the agenda and continue.
                                 lAgenda.Clear();
 
-                                // loop through inferencelink dictionary for .requires to build requiredForQuery list.
-                                lRequired.Add(dequeuedSymbol);
-
-                                // add the last element of the list to the requiredForQuery list until the last element is not in the dictionary.
-                                if(lInferenceLink.ContainsKey(lRequired.Last().ParentElement))
-                                { while (lInferenceLink.ContainsKey(lRequired.Last().ParentElement))
-                                    {
-                                        lRequired.Add(lInferenceLink[lRequired.Last().ParentElement]);
-                                    }
-                                }
-                                else
+                                // find in inferredlink list where symbol is the value. if key value is 1, add value to required list.
+                                List<KeyValuePair<SentenceElement, SentenceElement>> links = lInferenceLink.Where(x => x.Value.Name == givenQuery.Name).ToList();
+                                lRequired.Add(givenQuery);
+                                while (links.Any(x => x.Key.Value == 1))
                                 {
-                                    while (lInferenceLink.ContainsKey(lRequired.Last()))
-                                    {
-                                        lRequired.Add(lInferenceLink[lRequired.Last()]);
-                                    }
+                                    lRequired.Add(links.FirstOrDefault(l => l.Key.Value == 1).Key);
+                                    links.Remove(links.FirstOrDefault(l => l.Key.Value == 1));
+                                    links.AddRange(lInferenceLink.Where(x => x.Value.Name == lRequired.Last().Name));
                                 }
-                                // break out of foreach loop
+                                
+
                                 break;
                             }
                         }
                         else // if there is more than 1 requirement, it is a rule
                         {
-                            lInferenceLink.Add(rule.LeftElement, dequeuedSymbol); // add the rule to the inference link
-                            //lInferenceLink.Add(dequeuedSymbol, rule.LeftElement); // add the rule to the inference link
+                            // add requirements to agenda and link them to the right side of the rule.
+                            foreach(SentenceElement symbol in rule.LeftElement.GetSymbols())
+                            {
+                                lInferenceLink.Add(symbol, dequeuedSymbol); // link the symbol to the rule.
+                                lAgenda.Push(symbol); // add the symbol to the agenda.
+                            }
 
                             // left side of rule replaces dequeue symbol in tree.
                             dequeuedSymbol.ParentElement.LeftElement = rule.LeftElement;
-                            
 
                             // add requirements to agenda
                             rule.LeftElement.GetSymbols().ForEach(x => lAgenda.Push(x));
@@ -113,7 +126,7 @@ namespace InferenceEngine.Algorithms
                 } while (lAgenda.Count > 0);
 
                 // If sibling is null, or no parent conditions are true, no solution was found.
-                if(givenQuery.GetSymbols().Any(x => x.ParentElement.LeftElement == null || !x.ParentElement.Check()))
+                if (givenQuery.GetSymbols().Any(x => x.ParentElement.LeftElement == null || !x.ParentElement.Check()))
                 {
                     return "NO";
                 }
@@ -124,7 +137,7 @@ namespace InferenceEngine.Algorithms
             // if there are inferred symbols, add them to the output string. 
             inferredSymbols = String.Join(", ", lRequired.Select(x => x.Operator.Symbol + x.Name));
 
-            if (lCheckedNodes.Count > 0)
+            if (lRequired.Count > 0)
                 return "YES: " + inferredSymbols;
             else
                 return "NO";

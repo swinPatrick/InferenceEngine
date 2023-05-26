@@ -26,7 +26,7 @@ namespace InferenceEngine
             // if agenda is null, or this, return itself.
             if (aSentenceAgenda == null ||
                 (aSentenceAgenda.Name == aSentenceThis.Name
-                && aSentenceAgenda.Value == aSentenceThis.Value
+                && aSentenceAgenda.Operator == aSentenceThis.Operator
                 && aSentenceThis.ParentElement != aSentenceThis)) //make sure it's not the root node
                 lRequired.Add(aSentenceThis);
 

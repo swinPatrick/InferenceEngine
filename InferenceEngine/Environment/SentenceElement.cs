@@ -25,8 +25,8 @@ namespace InferenceEngine
             Name = aName;
             Operator = aOperator;
             Value = aValue;
-            LeftElement = this;
-            RightElement = this;
+            LeftElement = null;
+            RightElement = null;
             ParentElement = this;
             if (aOperator == null)
                 Operator = new Itself();
@@ -37,7 +37,34 @@ namespace InferenceEngine
         public List<SentenceElement> Requires(SentenceElement aSentence = null) { return Operator.Requires(aSentence, this); }
         public SentenceElement Apply(SentenceElement aSentenceAgenda) { return Operator.Apply(aSentenceAgenda, this); }
 
-        // returns a list of symbols which are below this one in the tree.
+
+        public bool Check()
+        {
+            return Operator.Check(this);
+        }
+        
+
+        public List<SentenceElement> Requires(SentenceElement aSentence = null)
+        {
+
+            return Operator.Requires(aSentence, this);
+        }
+
+        public SentenceElement Apply(SentenceElement aSentenceAgenda)
+        {
+            return Operator.Apply(aSentenceAgenda, this);
+        }
+
+        public SentenceElement GetRoot()
+        {
+            SentenceElement root = this;
+            while (root.ParentElement != root)
+            {
+                root = root.ParentElement;
+            }
+            return root;
+        }
+
         public List<SentenceElement> GetSymbols(SentenceElement aSentence = null)
         {
             // search itself by default.
