@@ -27,7 +27,8 @@ namespace InferenceEngine
             if (aSentenceAgenda == null || 
                 (aSentenceAgenda.Name == aSentenceThis.Name 
                 && aSentenceAgenda.Value == aSentenceThis.Value
-                && aSentenceThis.ParentElement != aSentenceThis)) //make sure it's not the root node
+                //&& aSentenceThis.ParentElement != aSentenceThis //make sure it's not the root node
+                ))
                 lRequired.Add(aSentenceThis);
             
             return lRequired;

@@ -63,7 +63,15 @@ namespace InferenceEngine
         
         public override string ToString()
         {
-            return (Value == 1 ? "" : "~") + Name;
+            string s = "";
+            if( Operator is Itself ||
+                Operator is Not)
+                s = (Value == 1 ? "" : "~") + Name;
+            else
+            {
+                s = "(" + LeftElement.ToString() + Operator.Symbol + RightElement.ToString() + ")";
+            }
+            return s;
         }
     }
 }

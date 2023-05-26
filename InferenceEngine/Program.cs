@@ -50,6 +50,8 @@ namespace InferenceEngine
 
             // Ask the engine the query
             Console.WriteLine(engineMethod.Ask(Query));
+
+            Console.ReadKey();
         }
        
 

@@ -10,7 +10,7 @@ namespace InferenceEngine
     {
         public Or()
         {
-            Symbol = "|";
+            Symbol = @"\|\|";
         }
 
         public override bool Check(SentenceElement aSentence)
