@@ -35,9 +35,10 @@ namespace InferenceEngine
 
         public override SentenceElement Apply(SentenceElement aSearchFor, SentenceElement aTarget)
         {
+            // check if this is the node that is being searched for. if it is, update the value. return if condition is met
             if (aTarget.Name == aSearchFor.Name)
             {
-                aTarget.Value = aSearchFor.Value; // might want to change value to 0.
+                aTarget.Value = aSearchFor.Value; // might want to change value to 1/0.
             }
             if (aTarget.Value == 0)
             {

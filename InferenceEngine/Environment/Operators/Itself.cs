@@ -22,7 +22,7 @@ namespace InferenceEngine
         public override List<SentenceElement> Requires(SentenceElement aSentenceAgenda, SentenceElement aSentenceThis)
         { 
             List<SentenceElement> lRequired = new List<SentenceElement>();
-
+            
             // if agenda is null, or this, return itself.
             if (aSentenceAgenda == null || 
                 (aSentenceAgenda.Name == aSentenceThis.Name 
@@ -37,9 +37,9 @@ namespace InferenceEngine
 
         public override SentenceElement Apply(SentenceElement aSearchFor, SentenceElement aTarget)
         {
+            // if this is the node being searched for, updae the value. if the value is 1, return itself.
             if (aTarget.Name == aSearchFor.Name)
             {
-                //aTarget.Value = 1;
                 aTarget.Value = aSearchFor.Value; // might want to change value to 0.
             }
             if(aTarget.Value == 1)

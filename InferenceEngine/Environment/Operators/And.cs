@@ -39,23 +39,6 @@ namespace InferenceEngine
             
 
             return lRequires;
-
-            /*
-            if ((aSentenceThis.LeftElement.Value == 1)&&(aSentenceThis.RightElement.Value == 1))
-            {
-                aSentenceThis.Value = 1;
-            }
-            if (aSentenceThis.LeftElement.Value == 0)
-            {
-                aSentenceRequirements.AddRange(aSentenceThis.LeftElement.Requires(aSentenceAgenda, aSentenceRequirements));
-            }
-            if (aSentenceThis.RightElement.Value == 0)
-            {
-                aSentenceRequirements.AddRange(aSentenceThis.RightElement.Requires(aSentenceAgenda, aSentenceRequirements));
-            }
-            
-            return aSentenceRequirements;
-            */
         }
 
         /// <summary>
