@@ -38,9 +38,9 @@ namespace InferenceEngine
             List<SentenceElement> Query = new List<SentenceElement>();
 
             // Set variable that were read by document.
-            FileReader.ReadFile(filename, KnowledgeBase, Query);
+            //FileReader.ReadFile(filename, KnowledgeBase, Query);
             // otherwise, if filereader output is required:
-            //Console.WriteLine(FileReader.ReadFile(filename, KnowledgeBase, Query));
+            Console.WriteLine(FileReader.ReadFile(filename, KnowledgeBase, Query));
 
             // Set Method based on input <method>
             Method engineMethod = GetMethod(method);

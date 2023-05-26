@@ -24,8 +24,8 @@ namespace InferenceEngine
             Name = aName;
             Operator = aOperator;
             Value = aValue;
-            LeftElement = this;
-            RightElement = this;
+            LeftElement = null;
+            RightElement = null;
             ParentElement = this;
             if (aOperator == null)
                 Operator = new Itself();
@@ -49,6 +49,15 @@ namespace InferenceEngine
             return Operator.Apply(aSentenceAgenda, this);
         }
 
+        public SentenceElement GetRoot()
+        {
+            SentenceElement root = this;
+            while (root.ParentElement != root)
+            {
+                root = root.ParentElement;
+            }
+            return root;
+        }
 
         public List<SentenceElement> GetSymbols(SentenceElement aSentence = null)
         {

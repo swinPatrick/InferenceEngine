@@ -17,9 +17,9 @@ namespace InferenceEngine
 
         public override bool Check(SentenceElement aSentence)
         {
-            // if any child is itself, return false
-            if (aSentence.LeftElement == aSentence ||
-                aSentence.RightElement == aSentence)
+            // if any child is null, return false
+            if (aSentence.LeftElement == null ||
+                aSentence.RightElement == null)
                 return false;
 
             // Both left and right elements must be true
